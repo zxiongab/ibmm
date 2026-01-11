@@ -463,9 +463,6 @@ def fetch_template_bytes(url: str):
 
 @st.cache_data
 def load_document_sections(phase: str, document: str):
-    """
-    根据 phase + document 名，从 data 目录加载对应 json 里的 sections
-    """
     try:
         phase_info = PHASE_DOC_MAP.get(phase)
         if not phase_info:
@@ -485,17 +482,42 @@ def load_document_sections(phase: str, document: str):
         with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        sections = []
-        for item in data:
-            sections.append(
-                {
-                    "section_number": item.get("section_number", ""),
-                    "section_title": item.get("section_title", ""),
-                    "text": item.get("text", ""),
-                }
-            )
+        # ---- 兼容不同结构 ----
+        # Case A: {"sections": [...]}
+        if isinstance(data, dict):
+            if "sections" in data and isinstance(data["sections"], list):
+                data = data["sections"]
+            else:
+                # dict 但不含 sections，就当成一个 section
+                data = [data]
 
-        # 排序逻辑
+        # Case B: list[str] -> 转成 list[dict]
+        if isinstance(data, list) and (len(data) == 0 or isinstance(data[0], str)):
+            return [
+                {
+                    "section_number": str(i + 1),
+                    "section_title": f"Section {i + 1}",
+                    "text": s,
+                }
+                for i, s in enumerate(data)
+                if isinstance(s, str)
+            ]
+
+        # Case C: list[dict] 正常
+        sections = []
+        if isinstance(data, list):
+            for item in data:
+                if not isinstance(item, dict):
+                    continue
+                sections.append(
+                    {
+                        "section_number": str(item.get("section_number", "")),
+                        "section_title": str(item.get("section_title", "")),
+                        "text": str(item.get("text", "")),
+                    }
+                )
+
+        # 排序（保持你原来的逻辑）
         def sort_key(section):
             num = section["section_number"]
             parts = num.split(".")
@@ -517,6 +539,7 @@ def load_document_sections(phase: str, document: str):
     except Exception as e:
         st.error(f"Error loading sections: {str(e)}")
         return []
+
 # ============================================================================
 # SIDEBAR NAVIGATION
 # ============================================================================
@@ -1452,5 +1475,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
