@@ -1,6 +1,6 @@
 [
   {
-    "section_number": "1.0",
+    "section_number": "1",
     "section_title": "Introduction",
     "text": "Introduction",
     "embedding": [
@@ -2062,7 +2062,7 @@
     ]
   },
   {
-    "section_number": "2.0",
+    "section_number": "2",
     "section_title": "Background and Objectives",
     "text": "Background and Objectives",
     "embedding": [
@@ -11341,7 +11341,7 @@
     ]
   },
   {
-    "section_number": "3.0",
+    "section_number": "3",
     "section_title": "Plan of Action",
     "text": "Describe the actions necessary to execute this strategy.",
     "embedding": [
