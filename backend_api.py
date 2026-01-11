@@ -43,7 +43,13 @@ class EPLCBackend:
     
     def __init__(self):
         """Initialize the backend with OpenAI, ChromaDB connections, and embedding model"""
-        load_dotenv()
+        try:
+            from dotenv import load_dotenv
+            load_dotenv()  # 本地开发时读取 .env
+        except Exception:
+            pass  # 云端没 dotenv / 没 .env 也不影响
+
+        
         
         # API Key validation
         self.api_key = os.getenv("OPENAI_API_KEY", "").strip()
@@ -626,4 +632,5 @@ def main():
 
 
 if __name__ == "__main__":
+
     main()
