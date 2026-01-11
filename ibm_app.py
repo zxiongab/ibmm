@@ -712,7 +712,7 @@ def show_learn_page():
 # ============================================================================
 def show_ask_question_page():
     """Display Q&A page with Streamlit-assistant-like UI and citations."""
-    backend = get_backedn_safe()
+    backend = get_backend_safe()
     
     # =========================
     # 顶部：标题 + Restart 按钮
@@ -1035,7 +1035,7 @@ def show_create_doc_step1():
 # ============================================================================
 def show_create_doc_step3():
     """Display document generation step with left-right layout"""
-    backend = get_backedn_safe()
+    backend = get_backend_safe()
 
     # ✅ 读取模板下载链接（和 Step 1 一样的来源）
     template_urls = load_template_urls()
@@ -1452,4 +1452,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
