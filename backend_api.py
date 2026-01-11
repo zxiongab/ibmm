@@ -3,6 +3,8 @@ Backend API Wrapper for EPLC Assistant (Enhanced Version)
 This module wraps the backend logic for the Streamlit frontend
 Supports dual-database retrieval (EPLC + HHS) with exact + semantic search
 """
+import os, streamlit as st
+st.write("ENV has OPENAI_API_KEY:", bool(os.getenv("OPENAI_API_KEY")))
 
 import os
 import sys
@@ -634,3 +636,4 @@ def main():
 if __name__ == "__main__":
 
     main()
+
