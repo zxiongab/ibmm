@@ -3,8 +3,6 @@ Backend API Wrapper for EPLC Assistant (Enhanced Version)
 This module wraps the backend logic for the Streamlit frontend
 Supports dual-database retrieval (EPLC + HHS) with exact + semantic search
 """
-import os, streamlit as st
-st.write("ENV has OPENAI_API_KEY:", bool(os.getenv("OPENAI_API_KEY")))
 
 import os
 import sys
@@ -47,16 +45,19 @@ class EPLCBackend:
         """Initialize the backend with OpenAI, ChromaDB connections, and embedding model"""
         try:
             from dotenv import load_dotenv
-            load_dotenv()  # 本地开发时读取 .env
+            load_dotenv(override=False)
         except Exception:
-            pass  # 云端没 dotenv / 没 .env 也不影响
+            pass
 
-        
-        
-        # API Key validation
-        self.api_key = os.getenv("OPENAI_API_KEY", "").strip()
+        self.api_key = os.getenv("OPENAI_API_KEY")
         if not self.api_key:
-            raise ValueError("OPENAI_API_KEY missing in .env file")
+            raise ValueError(
+                "OPENAI_API_KEY is missing. "
+                "Set it via Streamlit Cloud Secrets or environment variables."
+            )
+
+        from openai import OpenAI
+        self.client = OpenAI(api_key=self.api_key)
         
         # Configuration
         self.chat_model = os.getenv("CHAT_MODEL", "gpt-4o-mini")
@@ -636,4 +637,5 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
