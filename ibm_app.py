@@ -33,13 +33,17 @@ st.markdown(hide_deploy_only, unsafe_allow_html=True)
 # BACKEND INITIALIZATION WITH CACHING
 # ============================================================================
 @st.cache_resource
-def get_backend():
-    """Initialize backend with error handling and caching"""
+def get_backend(_key: str):
+    return EPLCBackend()
+
+def get_backend_safe():
     try:
-        return EPLCBackend()
+        # 用 key 作为 cache key，让 Secrets 生效后重新初始化
+        return get_backend(os.getenv("OPENAI_API_KEY", "")[:8])
     except Exception as e:
-        st.error(f"❌ Failed to initialize backend: {str(e)}")
-        st.info("💡 Make sure your .env file contains OPENAI_API_KEY and vector_db folders exist")
+        st.error(f"❌ Failed to initialize backend: {e}")
+        st.code(traceback.format_exc())
+        st.info("💡 Check Streamlit Secrets / env vars and that vector_db exists.")
         return None
 
 # ============================================================================
@@ -708,7 +712,7 @@ def show_learn_page():
 # ============================================================================
 def show_ask_question_page():
     """Display Q&A page with Streamlit-assistant-like UI and citations."""
-    backend = get_backend()
+    backend = get_backedn_safe()
     
     # =========================
     # 顶部：标题 + Restart 按钮
@@ -1031,7 +1035,7 @@ def show_create_doc_step1():
 # ============================================================================
 def show_create_doc_step3():
     """Display document generation step with left-right layout"""
-    backend = get_backend()
+    backend = get_backedn_safe()
 
     # ✅ 读取模板下载链接（和 Step 1 一样的来源）
     template_urls = load_template_urls()
@@ -1448,3 +1452,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
